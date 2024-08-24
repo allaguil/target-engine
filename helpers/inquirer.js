@@ -7,10 +7,10 @@ const menuQuestions = [
         name: 'option',
         message: 'WHAT DO YOU WANT TO DO ?'.yellow,
         choices: [
-            { value: '1', name: 'Create Target Offer' },
-            { value: '2', name: 'Modify Target Offer' },
-            { value: '3', name: 'Delete Target Offer' },
-            { value: '0', name: 'Exit' }
+            { value: '1', name: '1. Create Target Offer' },
+            { value: '2', name: '2. Modify Target Offer' },
+            { value: '3', name: '3. Delete Target Offer' },
+            { value: '0', name: '0. Exit' }
         ]
     }
 ];
@@ -19,9 +19,22 @@ const inquirerMenu = async () => {
     console.clear();
     console.log('             TARGET ENGINE APP             \n'.bgWhite.red.bold);
 
-    const answers = await inquirer.prompt(menuQuestions);
-    console.log(answers.option); // This is the "value" selected by the user inside the "choices" Array.
-    return answers.option;
+    const { option } = await inquirer.prompt(menuQuestions);
+    //console.log( option ); // This is the "value" selected by the user inside the "choices" Array.
+    return option;
 }
 
-export { inquirerMenu };
+const pause = async () => {
+    const question = [
+        {
+            type: 'input',
+            name: 'enter',
+            message: `Press ${ 'ENTER'.green.underline } to continue`
+        }
+    ];
+
+    console.log('\n');
+    await inquirer.prompt(question);
+}
+
+export { inquirerMenu, pause };
