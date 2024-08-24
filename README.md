@@ -4,3 +4,4 @@
 
 - npm run dev
 - node app
+- nodemon app
