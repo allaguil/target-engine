@@ -20,7 +20,7 @@ const inquirerMenu = async () => {
     console.log('             TARGET ENGINE APP             \n'.bgWhite.red.bold);
 
     const { option } = await inquirer.prompt(menuQuestions);
-    //console.log( option ); // This is the "value" selected by the user inside the "choices" Array.
+    //console.log( option ); // This is the "value" selected by the user inside the "choices" Array, que hace referencia a el => name: 'option' de cada pregunta.
     return option;
 }
 
@@ -37,4 +37,23 @@ const pause = async () => {
     await inquirer.prompt(question);
 }
 
-export { inquirerMenu, pause };
+const readInput = async ( message ) => {
+    const question = [
+        {
+            type: 'input',
+            name: 'description',
+            message,
+            validate( value ) {
+                if( value.length === 0 ){
+                    return 'Please enter a value';
+                }
+                return true;
+            }
+        }
+    ];
+
+    const { description } = await inquirer.prompt(question);
+    return description;
+}
+
+export { inquirerMenu, pause, readInput };
