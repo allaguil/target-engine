@@ -7,10 +7,10 @@ const menuQuestions = [
         name: 'option',
         message: 'WHAT DO YOU WANT TO DO ?'.yellow,
         choices: [
-            { value: '1', name: '1. Create Target Offer' },
-            { value: '2', name: '2. Modify Target Offer' },
-            { value: '3', name: '3. Delete Target Offer' },
-            { value: '0', name: '0. Exit' }
+            { value: '1', name: `${'1.'.cyan} Create Target Offer` },
+            { value: '2', name: `${'2.'.cyan} List Target Offers` },
+            { value: '3', name: `${'3.'.cyan} Delete Target Offer` },
+            { value: '0', name: `${'0.'.cyan} Exit` }
         ]
     }
 ];
