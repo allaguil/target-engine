@@ -1,0 +1,90 @@
+<script>
+    var missSelector = 0,
+        isProd = '${user.isProd}',
+        isDebug = typeof sessionStorage.tntDebugging !== 'undefined' ? 'true' : 'false',
+        state = 'TNT_${campaign.id}:${campaign.recipe.id}',
+        productID = '${user.TT_ProductID}',
+        tntExp = '${campaign.recipe.name}',
+        ss = screen.availWidth || window.outerWidth || document.documentElement.clientWidth,
+        device = (ss > 1024) ? "Desktop" : (ss <= 1024 && ss > 768) ? "Tablet" : "Mobile",
+        domain = isProd === 'false' ? "uat${user.CurrentUAT}.online.citi.com" : "online.citi.com",
+        textToChange = '',
+        tntClickTrack = {
+            'mbox': 'mboxClickTrack',
+            'selector': '',
+            'preventDefault': true,
+            'params': {
+                'clicked': '',
+                'kpi': '',
+                'experience': '${campaign.recipe.name}',
+                'campaingID': '${campaign.id}',
+            },
+            "success": function () {
+                if (typeof window._dl.adobe_target_test_version === 'undefined') {
+                    window._dl.adobe_target_test_version = state + "|" + tntClickTrack.params.kpi + "~" + tntClickTrack.params.clicked;
+                } else {
+                    window._dl.adobe_target_test_version += "|" + tntClickTrack.params.kpi + "~" + tntClickTrack.params.clicked;
+                }
+                if (isProd == "false" || isDebug != "false") {
+                    console.info("AT.js AB-Test ${campaign.id} Success event track ${campaign.recipe.name} " + tntClickTrack.params.clicked);
+                }
+                window.sessionStorage.setItem('tntClickTracker', tntClickTrack.params.clicked); // keep track
+            }
+        };
+
+    function runTntTest(selector, textToChange) {
+        
+    }
+
+    function getTntExp(selector) {
+        if (tntExp.includes('Control')) {
+            runTntTest(selector);
+        } else if (tntExp.includes('ExpB')) {
+            textToChange = '';
+            runTntTest(selector, textToChange);
+        } else if (tntExp.includes('ExpC')) {
+            textToChange = '';
+            runTntTest(selector, textToChange);
+        }
+    }
+
+    function waitForElementToDisplay_10414(selector, time) {
+        try {
+            if (document.querySelector(selector) !== null && !document.querySelector(selector).classList.contains("tnt_${campaign.id}")) {
+                if (typeof window._dl.adobe_target_test_version === 'undefined') {
+                    window._dl.adobe_target_test_version = state;
+                } else {
+                    if (!window._dl.adobe_target_test_version.includes(state)) {
+                        window._dl.adobe_target_test_version += "|" + state;
+                    }
+                }
+                if (isProd == "false" || isDebug != "false") {
+                    console.info("AT.js AB-Test ${campaign.id} ${campaign.recipe.name} Run");
+                }
+                getTntExp();
+            } else {
+                var errorlog = " :Selector missed in waitForElementToDisplay: " + selector,
+                    errorlogged = false;
+                setTimeout(() => {
+                    if (missSelector <= 5) {
+                        waitForElementToDisplay_10414(selector, time);
+                        if (missSelector === 5 && errorlogged === false && document.querySelector(selector) === null) {
+                            errorlogged = true;
+                            window._dl.adobe_target_test_version += errorlog;
+                            console.info(window._dl.adobe_target_test_version);
+                        }
+                        missSelector++;
+                    }
+                }, time);
+            }
+        } catch (tnt_error) {
+            var logError = " :Error in waitForElementToDisplay: " + tnt_error.message;
+            window._dl.adobe_target_test_version += logError;
+            if (isProd === "false" || isDebug !== "false") {
+                console.info(window._dl.adobe_target_test_version);
+            }
+        }
+    }
+
+    waitForElementToDisplay_10414(selector, 1000);
+</script>
